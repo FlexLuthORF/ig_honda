@@ -10,6 +10,7 @@ def main():
     parser.add_argument('-o', '--outdir', type=str, default='.', help='Output directory for results.')
     parser.add_argument('--sbatch', type=str, choices=['keep', 'remove'], default='remove', help='Whether to keep or remove the sbatch file.')
     parser.add_argument('--alleles', '-a', type=str, default='0')
+    parser.add_argument('-j', '--job', type=str, required=True, help='task to run. options: igk, vcf')
     args = parser.parse_args()
 
     sample_file_path = args.file
@@ -17,10 +18,14 @@ def main():
     num_samples = count_lines(sample_file_path)
 
     # Limit cores to a maximum of 144 (12 nodes * 12 threads)
-    num_cores = min(num_samples, 144)
+    num_cores = min(num_samples, 120)
     print("The number of cores is " + str(num_cores))
     # Generate the sbatch file and submit it
-    generate_sbatch(num_cores, sample_file_path, output_directory)
+    if args.job == 'igk':
+        job = 'igk_pipeline'
+    elif args.job == 'vcf':
+        job = 'ig_honda_vcf'  
+    generate_sbatch(num_cores, sample_file_path, output_directory, job)
     result = submit_sbatch()
     print(f"Sbatch submission result: {result}")
 

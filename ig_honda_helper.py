@@ -8,18 +8,24 @@ def count_lines(file_path):
     except FileNotFoundError:
         print(f"File {file_path} not found.")
         return 0
-def generate_sbatch(num_cores, sample_file, out_dir):
+def generate_sbatch(num_cores, sample_file, out_dir,job):
+    if job == 'igk_pipeline':
+        taskpernode = '1'
+    elif job == 'ig_honda_vcf'or job == 'ig_merge_hifiasm':
+        taskpernode = '12' 
     sbatch_content = f"""#!/bin/bash
-#SBATCH --job-name=variant_analysis
+#SBATCH --job-name={job}
 #SBATCH --partition=compute             # Partition (job queue)
 #SBATCH --time=01:00:00              # Runtime in D-HH:MM format
 #SBATCH --output=job_logs/%j.out     # File to which STDOUT will be written
 #SBATCH --error=job_logs/%j.err      # File to which STDERR will be written
-#SBATCH --ntasks-per-node=12
+#SBATCH --nodes=1-10
+#SBATCH --cpus-per-task={taskpernode}
+#SBATCH --ntasks-per-node={taskpernode}
 #SBATCH --ntasks={num_cores}
 echo "Starting job for {sample_file} with {num_cores} cores."
 
-python /home/zmvanw01/ig_honda/ig_honda_vcf.py --file {sample_file} --outdir {out_dir}
+python ./{job}.py --file {sample_file} --outdir {out_dir}
 
 echo "Job finished."
 
