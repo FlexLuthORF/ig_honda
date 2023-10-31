@@ -11,7 +11,7 @@ def count_lines(file_path):
 def generate_sbatch(num_cores, sample_file, out_dir,job):
     if job == 'igk_pipeline':
         taskpernode = '1'
-    elif job == 'ig_honda_vcf'or job == 'ig_merge_hifiasm':
+    elif job == 'ig_honda_vcf'or job == 'ig_merge_hifiasm' or job == 'iterate_ig':
         taskpernode = '12' 
     sbatch_content = f"""#!/bin/bash
 #SBATCH --job-name={job}

@@ -24,7 +24,11 @@ def main():
     if args.job == 'igk':
         job = 'igk_pipeline'
     elif args.job == 'vcf':
-        job = 'ig_honda_vcf'  
+        job = 'ig_honda_vcf'
+    elif args.job == 'merge':
+        job = 'ig_merge_hifiasm'      
+    elif args.job == 'iterate_ig':
+        job = 'iterate_ig'  
     generate_sbatch(num_cores, sample_file_path, output_directory, job)
     result = submit_sbatch()
     print(f"Sbatch submission result: {result}")
